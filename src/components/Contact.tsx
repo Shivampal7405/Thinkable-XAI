@@ -28,14 +28,14 @@ export default function Contact() {
   });
 
   const [form, setForm] = useState<FormData>({
-    name: '',
-    email: '',
-    company: '',
-    phone: '',
-    message: '',
-    service: ''
+    name: "",
+    email: "",
+    company: "",
+    phone: "",
+    message: "",
+    service: "",
   });
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
@@ -46,20 +46,20 @@ export default function Contact() {
       icon: <Mail className="w-6 h-6" />,
       title: "Email Us",
       details: ["hello@thinkable-xai.com", "sales@thinkable-xai.com"],
-      color: "from-blue-500 to-cyan-500"
+      color: "from-blue-500 to-cyan-500",
     },
     {
       icon: <Phone className="w-6 h-6" />,
       title: "Call Us",
       details: ["+1 (555) 123-4567", "+1 (555) 987-6543"],
-      color: "from-green-500 to-emerald-500"
+      color: "from-green-500 to-emerald-500",
     },
     {
       icon: <MapPin className="w-6 h-6" />,
       title: "Visit Us",
       details: ["123 AI Innovation Drive", "Tech Valley, CA 94043"],
-      color: "from-purple-500 to-pink-500"
-    }
+      color: "from-purple-500 to-pink-500",
+    },
   ];
 
   const services = [
@@ -69,24 +69,26 @@ export default function Contact() {
     "Custom AI Model Training",
     "Enterprise AI Solutions",
     "AI Consulting",
-    "Other"
+    "Other",
   ];
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const validateForm = (): boolean => {
     if (!form.name.trim()) {
-      setError('Please enter your name.');
+      setError("Please enter your name.");
       return false;
     }
     if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) {
-      setError('Please enter a valid email address.');
+      setError("Please enter a valid email address.");
       return false;
     }
     if (!form.message.trim()) {
-      setError('Please enter your message.');
+      setError("Please enter your message.");
       return false;
     }
     return true;
@@ -99,39 +101,48 @@ export default function Contact() {
     if (!validateForm()) return;
 
     try {
-      setStatus('sending');
+      setStatus("sending");
 
-      // Simulate API call delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      const res = await fetch('/api/save-to-excel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+      const res = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          message: `
+            Company: ${form.company || "N/A"}
+            Phone: ${form.phone || "N/A"}
+            Service: ${form.service || "N/A"}
+            Message: ${form.message}
+          `,
+        }),
       });
 
-      if (!res.ok) throw new Error('Network error');
+      const data = await res.json();
 
-      setStatus('sent');
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to send message");
+      }
+
+      setStatus("sent");
       setShowSuccessModal(true);
       setForm({
-        name: '',
-        email: '',
-        company: '',
-        phone: '',
-        message: '',
-        service: ''
+        name: "",
+        email: "",
+        company: "",
+        phone: "",
+        message: "",
+        service: "",
       });
 
-      // Hide success modal after 5 seconds
       setTimeout(() => {
         setShowSuccessModal(false);
-        setStatus('idle');
+        setStatus("idle");
       }, 5000);
-
     } catch (err) {
-      setStatus('error');
-      setError('Something went wrong, please try again.');
+      setStatus("error");
+      setError("Something went wrong, please try again.");
+      console.error("❌ Error sending message:", err);
     }
   };
 
@@ -139,9 +150,7 @@ export default function Contact() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
+      transition: { staggerChildren: 0.1 },
     },
   };
 
@@ -150,9 +159,7 @@ export default function Contact() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: 0.6,
-      },
+      transition: { duration: 0.6 },
     },
   };
 
@@ -394,13 +401,12 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={status === 'sending' || status === 'sent'}
-                className={`w-full rounded-xl py-4 px-6 text-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-                  status === 'sent'
+                className={`w-full rounded-xl py-4 px-6 text-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${status === 'sent'
                     ? 'bg-green-500 text-white cursor-not-allowed'
                     : status === 'sending'
-                    ? 'bg-indigo-400 text-white cursor-wait'
-                    : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
-                }`}
+                      ? 'bg-indigo-400 text-white cursor-wait'
+                      : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105'
+                  }`}
               >
                 {status === 'sent' ? (
                   <>

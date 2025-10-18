@@ -68,7 +68,7 @@ export default function Navbar() {
                 onMouseLeave={() => setServicesOpen(false)}
                 className="flex items-center gap-1 text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
               >
-                Our Services
+                Services
                 <ChevronDown className="w-4 h-4" />
               </button>
               <AnimatePresence>
