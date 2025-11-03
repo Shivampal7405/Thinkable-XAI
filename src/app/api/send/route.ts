@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
         const { error } = await resend.emails.send({
             from: "Acme <onboarding@resend.dev>", // replace with your verified sender
-            to: ['yadavsk098@gmail.com'], // the email address you want to send a message
+            to: ['shivampal7405@gmail.com'], // the email address you want to send a message
             subject: `${name} has a message!`,
             react: EmailTemplate({ name, email, message }),
         });
